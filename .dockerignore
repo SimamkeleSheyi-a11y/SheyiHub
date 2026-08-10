@@ -1,0 +1,15 @@
+.git
+.gitignore
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.coverage
+**/htmlcov
+**/.venv
+**/node_modules
+frontend/dist
+backend/staticfiles
+backend/media
+backend/db.sqlite3
+backend/.env
+.env

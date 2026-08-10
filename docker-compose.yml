@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: sheyihub
+      POSTGRES_USER: sheyihub
+      POSTGRES_PASSWORD: sheyihub
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sheyihub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    command: >-
+      sh -c "python manage.py migrate --noinput &&
+      gunicorn config.asgi:application -k uvicorn_worker.UvicornWorker
+      --bind 0.0.0.0:8000 --workers 2 --reload --access-logfile - --error-logfile -"
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.docker
+      DJANGO_SECRET_KEY: docker-dev-secret-key-change-before-sharing
+      DATABASE_URL: postgres://sheyihub:sheyihub@postgres:5432/sheyihub
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      FRONTEND_URL: http://localhost:5173
+    volumes:
+      - ./backend:/app
+      - media_data:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery-worker:
+    build: ./backend
+    command: celery -A config worker -l info
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.docker
+      DJANGO_SECRET_KEY: docker-dev-secret-key-change-before-sharing
+      DATABASE_URL: postgres://sheyihub:sheyihub@postgres:5432/sheyihub
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      FRONTEND_URL: http://localhost:5173
+    volumes:
+      - ./backend:/app
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    command: npm run dev -- --host
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
+  media_data:
