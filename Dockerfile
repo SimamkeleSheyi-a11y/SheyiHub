@@ -36,4 +36,4 @@ RUN DJANGO_SECRET_KEY=build-only-secret-key-00000000000000000000 \
     python manage.py collectstatic --noinput
 
 EXPOSE 8000
-CMD ["sh", "-c", "gunicorn config.asgi:application -k uvicorn_worker.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --workers ${WEB_CONCURRENCY:-2} --timeout 120 --graceful-timeout 30 --access-logfile - --error-logfile -"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn config.asgi:application -k uvicorn_worker.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --workers 1 --timeout 120 --graceful-timeout 30 --access-logfile - --error-logfile -"]
