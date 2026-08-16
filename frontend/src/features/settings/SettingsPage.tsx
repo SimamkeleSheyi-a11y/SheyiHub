@@ -401,7 +401,7 @@ export function SettingsPage() {
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={() => resendMutation.mutate()}
+                onClick={() => resendMutation.mutate({})}
                 isLoading={resendMutation.isPending}
               >
                 Resend verification
