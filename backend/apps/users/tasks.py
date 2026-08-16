@@ -51,7 +51,7 @@ def send_verification_code_email(user_id: str, code: str):
     </div>
     """
 
-    send_mail(
+    return send_mail(
         subject="Verify your SheyiHub email",
         message=text_message,
         from_email=settings.DEFAULT_FROM_EMAIL,
@@ -72,7 +72,7 @@ def send_verification_email(user_id: str, uidb64: str, token: str):
         return
 
     link = f"{settings.FRONTEND_URL}/verify-email?uid={uidb64}&token={token}"
-    send_mail(
+    return send_mail(
         subject="Verify your SheyiHub email",
         message=(
             f"Hi {user.display_name},\n\nVerify your email: {link}\n\n"
@@ -93,7 +93,7 @@ def send_password_reset_email(user_id: str, uidb64: str, token: str):
         return
 
     link = f"{settings.FRONTEND_URL}/reset-password?uid={uidb64}&token={token}"
-    send_mail(
+    return send_mail(
         subject="Reset your SheyiHub password",
         message=(
             f"Hi {user.display_name},\n\nReset your password: {link}\n\n"
