@@ -13,8 +13,7 @@ class ThemePreference(models.TextChoices):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Matches Phase 2 §2's USER entity: UUID PK, email-only login, email
-    verification gates access to core features (Phase 1 FR1.4)."""
+    """SheyiHub user: UUID PK, email-only login, verification-gated core features."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
@@ -25,7 +24,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     theme_preference = models.CharField(
         max_length=10, choices=ThemePreference.choices, default=ThemePreference.SYSTEM
     )
-
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -40,3 +38,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class EmailVerificationCode(models.Model):
+    """Stores only a hash of the current 6-digit email verification code."""
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="email_verification_code",
+    )
+    code_hash = models.CharField(max_length=128, blank=True, default="")
+    expires_at = models.DateTimeField(null=True, blank=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    attempts = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return f"Email verification for {self.user.email}"

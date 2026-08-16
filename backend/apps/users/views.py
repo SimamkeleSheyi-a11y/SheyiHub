@@ -14,6 +14,7 @@ from .serializers import (
     RegisterSerializer,
     ResendVerificationSerializer,
     UserProfileSerializer,
+    VerifyEmailCodeSerializer,
     VerifyEmailSerializer,
 )
 
@@ -27,7 +28,10 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response(UserProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(
+            UserProfileSerializer(user).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class LoginView(APIView):
@@ -43,7 +47,12 @@ class LoginView(APIView):
             raise AuthenticationFailed("Incorrect email or password.")
 
         refresh = RefreshToken.for_user(user)
-        response = Response({"access": str(refresh.access_token), "user": UserProfileSerializer(user).data})
+        response = Response(
+            {
+                "access": str(refresh.access_token),
+                "user": UserProfileSerializer(user).data,
+            }
+        )
         return set_auth_cookies(response, str(refresh))
 
 
@@ -63,7 +72,7 @@ class RefreshView(APIView):
             raise AuthenticationFailed("Refresh token is invalid or expired.") from None
 
         user_id = old_refresh["user_id"]
-        old_refresh.blacklist()  # rotation: old refresh token is now dead
+        old_refresh.blacklist()
 
         from .models import User
 
@@ -85,11 +94,32 @@ class LogoutView(APIView):
                 RefreshToken(raw_refresh).blacklist()
             except TokenError:
                 pass
+
         response = Response(status=status.HTTP_204_NO_CONTENT)
         return clear_auth_cookies(response)
 
 
+class VerifyEmailCodeView(APIView):
+    permission_classes = [permissions.AllowAny]
+    throttle_scope = "auth"
+
+    def post(self, request):
+        serializer = VerifyEmailCodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        return Response(
+            {
+                "detail": "Email verified.",
+                "email_verified": True,
+                "email": user.email,
+            }
+        )
+
+
 class VerifyEmailView(APIView):
+    """Legacy link endpoint kept so old verification emails do not break."""
+
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -102,13 +132,26 @@ class VerifyEmailView(APIView):
 
 
 class ResendVerificationView(APIView):
+    permission_classes = [permissions.AllowAny]
     throttle_scope = "auth"
 
     def post(self, request):
-        serializer = ResendVerificationSerializer(data={}, context={"request": request})
+        serializer = ResendVerificationSerializer(
+            data=request.data,
+            context={"request": request},
+        )
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({"detail": "Verification email sent, if your account needs it."})
+        result = serializer.save()
+
+        return Response(
+            {
+                "detail": (
+                    "If that account still needs verification, "
+                    "a new code has been sent."
+                ),
+                **result,
+            }
+        )
 
 
 class PasswordResetRequestView(APIView):
@@ -119,8 +162,9 @@ class PasswordResetRequestView(APIView):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        # Same response whether or not the email exists — don't leak account existence.
-        return Response({"detail": "If that account exists, a reset link has been sent."})
+        return Response(
+            {"detail": "If that account exists, a reset link has been sent."}
+        )
 
 
 class PasswordResetConfirmView(APIView):
@@ -143,13 +187,6 @@ class MeView(generics.RetrieveUpdateAPIView):
 
 class WsTicketView(APIView):
     throttle_scope = "ws-ticket"
-
-    """
-    Native browser WebSockets can't send an Authorization header, so JWTs
-    don't attach the usual way. Exchange a normal Bearer-authenticated
-    request for a random, single-use, 30-second ticket instead — that's
-    what goes in the wss:// URL, not the access token itself (Phase 5 §auth).
-    """
 
     def post(self, request):
         import secrets
