@@ -79,12 +79,12 @@ export function FileSharePanel({ conversationId }: { conversationId: string }) {
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
         onDragLeave={(e) => { e.preventDefault(); if (e.currentTarget === e.target) setDragging(false); }}
         onDrop={(e) => { e.preventDefault(); setDragging(false); void upload(e.dataTransfer.files?.[0]); }}
-        className={`mb-3 rounded-xl border border-dashed p-4 text-center transition ${dragging ? "border-ember bg-ember/10" : "border-(--border) bg-black/5 dark:bg-white/5"}`}
+        className={`mb-3 rounded-[14px] border border-dashed p-3 text-center transition sm:p-4 ${dragging ? "border-ember bg-ember/10" : "border-(--border) bg-black/5 dark:bg-white/5"}`}
       >
-        <UploadCloud className="mx-auto mb-2 size-6 text-ember" />
-        <p className="text-sm font-medium text-(--text-primary)">Drop a file here</p>
-        <p className="mt-1 text-xs text-(--text-secondary)">Images, PDF, text/CSV and Office files · max 25 MB</p>
-        <button onClick={() => inputRef.current?.click()} className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-ember px-3 py-1.5 text-xs font-semibold text-stone-950">
+        <UploadCloud className="mx-auto mb-2 size-5 text-ember sm:size-6" />
+        <p className="text-xs font-medium text-(--text-primary) sm:text-sm">Drop a file here</p>
+        <p className="mt-1 text-[9px] leading-4 text-(--text-secondary) sm:text-xs">Images, PDF, text/CSV and Office files · max 25 MB</p>
+        <button onClick={() => inputRef.current?.click()} className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-[9px] bg-ember px-3 py-1.5 text-xs font-semibold text-stone-950">
           <Paperclip className="size-3.5" /> Choose file
         </button>
       </div>
@@ -99,16 +99,16 @@ export function FileSharePanel({ conversationId }: { conversationId: string }) {
       {query.isLoading ? <div className="flex flex-1 items-center justify-center text-(--text-secondary)"><Loader2 className="size-5 animate-spin" /></div>
       : query.isError ? <ErrorBanner message="Shared files couldn't be loaded." />
       : files.length === 0 ? <div className="flex flex-1 flex-col items-center justify-center p-5 text-center text-(--text-secondary)"><Paperclip className="mb-2 size-7 opacity-60" /><p className="text-sm">No files have been shared yet.</p></div>
-      : <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
+      : <div className="soft-scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain">
           {files.map((file) => { const Icon = iconFor(file); return (
-            <div key={file.id} className="rounded-xl border border-(--border) bg-black/5 p-3 dark:bg-white/5">
-              <div className="flex items-start gap-3"><div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-ember/10 text-ember"><Icon className="size-4" /></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-(--text-primary)" title={file.filename}>{file.filename}</p><p className="mt-0.5 text-[11px] text-(--text-secondary)">{formatBytes(file.size_bytes)} · {file.uploader.display_name} · {new Date(file.uploaded_at).toLocaleString()}</p></div></div>
-              <div className="mt-2 flex gap-2">{file.previewable ? <button onClick={() => void openPreview(file)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-ember hover:bg-ember/10"><Eye className="size-3.5" /> Preview</button> : null}<button onClick={() => void download(file)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-(--text-secondary) hover:bg-black/5 dark:hover:bg-white/5"><Download className="size-3.5" /> Download</button></div>
+            <div key={file.id} className="rounded-[13px] border border-(--border) bg-black/5 p-3 dark:bg-white/5">
+              <div className="flex min-w-0 items-start gap-3"><div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-ember/10 text-ember"><Icon className="size-4" /></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-(--text-primary)" title={file.filename}>{file.filename}</p><p className="mt-0.5 line-clamp-2 text-[9px] leading-4 text-(--text-secondary) sm:text-[11px]">{formatBytes(file.size_bytes)} · {file.uploader.display_name} · {new Date(file.uploaded_at).toLocaleString()}</p></div></div>
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:flex">{file.previewable ? <button onClick={() => void openPreview(file)} className="inline-flex min-h-9 items-center justify-center gap-1 rounded-[9px] px-2 py-1 text-[10px] text-ember hover:bg-ember/10 sm:text-xs"><Eye className="size-3.5" /> Preview</button> : null}<button onClick={() => void download(file)} className="inline-flex min-h-9 items-center justify-center gap-1 rounded-[9px] px-2 py-1 text-[10px] text-(--text-secondary) hover:bg-black/5 dark:hover:bg-white/5 sm:text-xs"><Download className="size-3.5" /> Download</button></div>
             </div>
           ); })}
         </div>}
 
-      {preview ? <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 p-4" onMouseDown={(e) => e.target === e.currentTarget && setPreview(null)}><div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-stone-950 shadow-2xl"><div className="flex items-center justify-between border-b border-white/10 px-4 py-3 text-white"><span className="truncate text-sm font-medium">{preview.file.filename}</span><button onClick={() => setPreview(null)} aria-label="Close preview" className="rounded-md p-1 hover:bg-white/10"><X className="size-5" /></button></div><div className="min-h-0 flex-1 overflow-auto bg-black/30 p-3">{preview.file.content_type.startsWith("image/") ? <img src={preview.url} alt={preview.file.filename} className="mx-auto max-h-[78vh] max-w-full object-contain" /> : <iframe src={preview.url} title={preview.file.filename} className="h-[78vh] w-full rounded bg-white" />}</div></div></div> : null}
+      {preview ? <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/80 p-0 backdrop-blur-[4px] sm:items-center sm:p-4" onMouseDown={(e) => e.target === e.currentTarget && setPreview(null)}><div className="flex max-h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-[20px] bg-stone-950 shadow-2xl sm:max-h-[90vh] sm:rounded-xl"><div className="flex items-center justify-between border-b border-white/10 px-3 py-3 text-white sm:px-4"><span className="truncate text-sm font-medium">{preview.file.filename}</span><button onClick={() => setPreview(null)} aria-label="Close preview" className="rounded-md p-1 hover:bg-white/10"><X className="size-5" /></button></div><div className="min-h-0 flex-1 overflow-auto bg-black/30 p-3">{preview.file.content_type.startsWith("image/") ? <img src={preview.url} alt={preview.file.filename} className="mx-auto max-h-[78vh] max-w-full object-contain" /> : <iframe src={preview.url} title={preview.file.filename} className="h-[78vh] w-full rounded bg-white" />}</div></div></div> : null}
     </div>
   );
 }

@@ -73,7 +73,7 @@ export function NotificationBell() {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="relative rounded-md p-2 hover:bg-stone-100 dark:hover:bg-white/10"
+        className="relative grid size-9 place-items-center rounded-[10px] text-(--text-secondary) transition-colors hover:bg-ember/8 hover:text-(--text-primary)"
       >
         <Bell className="size-4.5" />
         {unreadCount > 0 ? (
@@ -86,9 +86,9 @@ export function NotificationBell() {
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 z-30 mt-1 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-(--border) bg-(--surface-raised) shadow-[var(--shadow-elevation-4)]"
+          className="premium-panel absolute right-0 z-40 mt-2 w-[min(23rem,calc(100vw-1.5rem))] overflow-hidden rounded-[16px] shadow-[var(--shadow-elevation-4)]"
         >
-          <div className="flex items-center justify-between border-b border-(--border) px-3 py-2.5">
+          <div className="flex items-center justify-between border-b border-(--border) px-4 py-3">
             <div>
               <p className="text-sm font-semibold text-(--text-primary)">Notifications</p>
               <p className="text-xs text-(--text-secondary)">{unreadCount} unread</p>
@@ -96,14 +96,14 @@ export function NotificationBell() {
             {unreadCount > 0 ? (
               <button
                 onClick={() => markAll.mutate()}
-                className="flex items-center gap-1 text-xs font-medium text-pine hover:underline dark:text-stone-200"
+                className="flex items-center gap-1 text-[10px] font-semibold text-ember hover:underline"
               >
                 <CheckCheck className="size-3.5" /> Mark all read
               </button>
             ) : null}
           </div>
 
-          <div className="max-h-96 overflow-y-auto">
+          <div className="soft-scrollbar max-h-[390px] overflow-y-auto">
             {listQuery.isLoading ? (
               <p className="px-3 py-6 text-center text-sm text-(--text-secondary)">Loading…</p>
             ) : notifications.length === 0 ? (
@@ -115,11 +115,11 @@ export function NotificationBell() {
                   role="menuitem"
                   onClick={() => openNotification(notification)}
                   className={cn(
-                    "flex w-full items-start gap-3 border-b border-(--border) px-3 py-3 text-left last:border-b-0 hover:bg-stone-50 dark:hover:bg-white/5",
+                    "flex w-full items-start gap-3 border-b border-(--border) px-4 py-3 text-left last:border-b-0 hover:bg-ember/[0.045]",
                     !notification.is_read && "bg-ember/5"
                   )}
                 >
-                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-stone-100 text-pine dark:bg-white/10 dark:text-stone-100">
+                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[10px] border border-ember/12 bg-ember/9 text-ember">
                     <NotificationIcon kind={notification.kind} />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -140,7 +140,7 @@ export function NotificationBell() {
               setOpen(false);
               navigate("/notifications");
             }}
-            className="w-full border-t border-(--border) px-3 py-2.5 text-center text-sm font-medium text-pine hover:bg-stone-50 dark:text-stone-200 dark:hover:bg-white/5"
+            className="w-full border-t border-(--border) px-4 py-3 text-center text-[10px] font-semibold text-ember hover:bg-ember/[0.045]"
           >
             View all notifications
           </button>

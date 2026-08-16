@@ -219,32 +219,43 @@ export function ConversationView({
   const isGroup = conversation?.type !== "dm";
 
   return (
-    <div className="flex h-full flex-col rounded-lg border border-(--border) bg-(--surface-raised)">
-      <div className="flex items-center gap-2 border-b border-(--border) px-4 py-3">
+    <div className="premium-panel flex h-full min-h-0 flex-col overflow-hidden rounded-[16px] md:rounded-[18px]">
+      <div className="flex min-h-[54px] items-center gap-2 border-b border-(--border) px-2.5 py-2 sm:min-h-16 sm:gap-3 sm:px-5 sm:py-3">
         {onBack ? (
           <button
             onClick={onBack}
             aria-label="Back to conversations"
-            className="-ml-1.5 rounded-md p-1.5 text-(--text-secondary) hover:bg-stone-100 md:hidden dark:hover:bg-white/10"
+            className="-ml-1 grid size-9 shrink-0 place-items-center rounded-[10px] text-(--text-secondary) hover:bg-ember/8 md:hidden"
           >
             <ArrowLeft className="size-5" />
           </button>
         ) : null}
         {!isGroup && otherParticipants[0] ? (
           <div className="relative shrink-0">
-            <Avatar name={otherParticipants[0].display_name} src={otherParticipants[0].avatar_url} size="sm" />
+            <Avatar
+              name={otherParticipants[0].display_name}
+              src={otherParticipants[0].avatar_url}
+              size="sm"
+            />
             <PresenceDot userId={otherParticipants[0].id} className="absolute -bottom-0.5 -right-0.5" />
           </div>
         ) : null}
-        <span className="truncate font-medium text-(--text-primary)">
+        <span className="truncate font-display text-sm font-semibold tracking-[-0.02em] text-(--text-primary)">
           {otherParticipants.map((p) => p.display_name).join(", ") || "Conversation"}
         </span>
-        <button onClick={() => setFilesOpen(true)} aria-label="Shared files" className="ml-auto inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-(--text-secondary) hover:bg-stone-100 dark:hover:bg-white/10">
+        <button
+          onClick={() => setFilesOpen(true)}
+          aria-label="Shared files"
+          className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-[10px] border border-(--border) bg-(--surface-soft) px-2.5 py-1.5 text-[10px] font-semibold text-(--text-secondary) transition-colors hover:border-ember/35 hover:text-(--text-primary)"
+        >
           <FolderOpen className="size-4" /> Files
         </button>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
+      <div
+        ref={scrollRef}
+        className="soft-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[radial-gradient(circle_at_75%_0%,rgba(132,87,255,.045),transparent_26rem)] p-2.5 sm:p-5"
+      >
         {isLoading ? (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-10 w-2/3" />
@@ -256,7 +267,7 @@ export function ConversationView({
               <button
                 onClick={handleLoadOlder}
                 disabled={isFetchingNextPage}
-                className="mx-auto mb-2 rounded-md px-3 py-1 text-xs font-medium text-(--text-secondary) hover:bg-stone-100 disabled:opacity-50 dark:hover:bg-white/5"
+                className="mx-auto mb-2 rounded-[9px] border border-(--border) bg-(--surface-soft) px-3 py-1.5 text-[10px] font-semibold text-(--text-secondary) transition-colors hover:border-ember/30 hover:text-(--text-primary) disabled:opacity-50"
               >
                 {isFetchingNextPage ? "Loading…" : "Load older messages"}
               </button>
@@ -293,25 +304,27 @@ export function ConversationView({
         )}
       </div>
 
-      <div className="flex items-center gap-2 border-t border-(--border) p-3">
+      <div className="sticky bottom-0 flex items-center gap-2 border-t border-(--border) bg-(--surface-raised)/96 p-2.5 pb-[max(.625rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:p-4">
         <input
           value={draft}
           onChange={(e) => handleDraftChange(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Message"
-          className="flex-1 rounded-md border border-(--border) bg-(--surface-raised) px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ember"
+          className="h-11 min-w-0 flex-1 rounded-[12px] border border-(--border) bg-(--surface-soft) px-3.5 text-xs text-(--text-primary) outline-none transition-colors placeholder:text-(--text-secondary) focus-visible:border-ember/40 focus-visible:ring-2 focus-visible:ring-ember/20 sm:h-10"
         />
         <button
           onClick={handleSend}
           aria-label="Send"
           disabled={!draft.trim()}
-          className="rounded-md bg-ember p-2 text-stone-900 disabled:opacity-40"
+          className="grid size-11 shrink-0 place-items-center rounded-[12px] bg-gradient-to-r from-[#7657ff] to-[#963ff0] text-white shadow-[0_8px_24px_rgba(118,87,255,.2)] transition hover:brightness-110 disabled:opacity-40 sm:size-10"
         >
           <Send className="size-4" />
         </button>
       </div>
       <Modal isOpen={filesOpen} onClose={() => setFilesOpen(false)} title="Shared files" size="md">
-        <div className="h-[min(70vh,620px)]"><FileSharePanel conversationId={conversationId} /></div>
+        <div className="h-[min(70vh,620px)]">
+          <FileSharePanel conversationId={conversationId} />
+        </div>
       </Modal>
     </div>
   );
@@ -350,8 +363,10 @@ function MessageBubble({
       ) : null}
       <div
         className={cn(
-          "max-w-[70%] rounded-lg px-3 py-2 text-sm",
-          isOwn ? "bg-pine text-white" : "bg-stone-100 text-(--text-primary) dark:bg-white/10"
+          "max-w-[88%] rounded-[14px] px-3.5 py-2.5 text-xs leading-5 sm:max-w-[72%]",
+          isOwn
+            ? "rounded-br-[5px] bg-gradient-to-br from-[#7455ff] to-[#933fe9] text-white shadow-[0_8px_24px_rgba(111,78,239,.14)]"
+            : "rounded-bl-[5px] border border-(--border) bg-(--surface-soft) text-(--text-primary)"
         )}
       >
         {message.content}
@@ -411,7 +426,7 @@ function ReceiptLabel({
 function PendingBubble({ pending, onRetry }: { pending: PendingMessage; onRetry: () => void }) {
   return (
     <div className="flex flex-col items-end">
-      <div className="max-w-[70%] rounded-lg bg-pine px-3 py-2 text-sm text-white opacity-70">
+      <div className="max-w-[88%] rounded-[14px] rounded-br-[5px] bg-gradient-to-br from-[#7455ff] to-[#933fe9] px-3.5 py-2.5 text-xs leading-5 text-white opacity-70 sm:max-w-[72%]">
         {pending.content}
       </div>
       <span className="mt-0.5 flex items-center gap-1 px-1 text-[11px] text-(--text-secondary)">
@@ -433,11 +448,14 @@ function TypingIndicator({ names }: { names: string[] }) {
   const label = names.length === 1 ? `${names[0]} is typing…` : `${names.join(", ")} are typing…`;
   return (
     <div className="flex items-center gap-2">
-      <div className="flex w-fit gap-1 rounded-full bg-stone-100 px-3 py-2 dark:bg-white/10" aria-hidden>
+      <div
+        className="flex w-fit gap-1 rounded-full border border-(--border) bg-(--surface-soft) px-3 py-2"
+        aria-hidden
+      >
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="size-1.5 animate-bounce rounded-full bg-stone-400"
+            className="size-1.5 animate-bounce rounded-full bg-ember/60"
             style={{ animationDelay: `${i * 120}ms` }}
           />
         ))}

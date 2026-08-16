@@ -6,9 +6,6 @@
 @import "@fontsource/plus-jakarta-sans/600.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 
-/* Class-based dark mode (light / dark / system all resolve to this class
-   being present or absent — see hooks/useTheme.ts) rather than only
-   following the OS media query. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -16,40 +13,37 @@
   --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
 
-  /* Phase 3 §3 palette */
-  --color-pine: #1f4b3f;
-  --color-pine-dark: #14201b;
-  --color-ember: #e29544;
-  --color-ember-dark: #c77a2e;
-  --color-signal: #3fa66b;
-  --color-rust: #c1523a;
+  --color-pine: #7357ff;
+  --color-pine-dark: #0a0d1f;
+  --color-ember: #9a67ff;
+  --color-ember-dark: #7b4df5;
+  --color-signal: #35d18b;
+  --color-rust: #ef5d72;
 
-  --color-stone-50: #f6f4f0;
-  --color-stone-100: #ede9e2;
-  --color-stone-200: #ddd8ce;
-  --color-stone-300: #c2bbac;
-  --color-stone-400: #9c9384;
-  --color-stone-500: #766d5f;
-  --color-stone-600: #5a5346;
-  --color-stone-700: #433e34;
-  --color-stone-800: #2b2822;
-  --color-stone-900: #1c1a17;
+  --color-stone-50: #f7f8fc;
+  --color-stone-100: #eef0f7;
+  --color-stone-200: #dde1ec;
+  --color-stone-300: #c4cad9;
+  --color-stone-400: #929bb0;
+  --color-stone-500: #6d7588;
+  --color-stone-600: #535b6c;
+  --color-stone-700: #3c4352;
+  --color-stone-800: #262b36;
+  --color-stone-900: #171a22;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
 
-  --shadow-elevation-1: 0 1px 2px rgba(20, 32, 27, 0.06), 0 1px 3px rgba(20, 32, 27, 0.08);
-  --shadow-elevation-2: 0 4px 8px rgba(20, 32, 27, 0.1), 0 2px 4px rgba(20, 32, 27, 0.08);
-  --shadow-elevation-3: 0 12px 24px rgba(20, 32, 27, 0.14), 0 4px 8px rgba(20, 32, 27, 0.1);
-  --shadow-elevation-4: 0 16px 32px rgba(20, 32, 27, 0.18), 0 6px 12px rgba(20, 32, 27, 0.12);
+  --shadow-elevation-1: 0 8px 24px rgba(20, 22, 38, 0.06);
+  --shadow-elevation-2: 0 14px 36px rgba(20, 22, 38, 0.1);
+  --shadow-elevation-3: 0 22px 54px rgba(20, 22, 38, 0.14);
+  --shadow-elevation-4: 0 28px 70px rgba(5, 7, 18, 0.28);
 
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
-
-  /* Phase 3 §3 signature element: a slow breathing ring, never a blink */
   --animate-live-pulse: live-pulse 2.4s var(--ease-standard) infinite;
 }
 
@@ -59,33 +53,149 @@
     opacity: 0.4;
   }
   50% {
-    opacity: 0.9;
+    opacity: 0.95;
   }
 }
 
-/* Semantic tokens that flip between light/dark — kept as plain custom
-   properties (not @theme) since their VALUE changes per mode, not their
-   existence. Components reference them via bg-(--surface) etc. */
 :root {
-  --surface: var(--color-stone-50);
-  --surface-raised: #ffffff;
-  --text-primary: var(--color-stone-900);
-  --text-secondary: var(--color-stone-600);
-  --border: var(--color-stone-200);
-  --sidebar-bg: var(--color-pine);
-  --sidebar-text: var(--color-stone-50);
-  --scrim: rgb(20 32 27 / 40%);
+  --surface: #f5f6fb;
+  --surface-raised: rgba(255, 255, 255, 0.92);
+  --surface-soft: #eef0f8;
+  --surface-elevated: #ffffff;
+  --text-primary: #151827;
+  --text-secondary: #687088;
+  --border: #dde1ed;
+  --border-strong: #cbd1e1;
+  --sidebar-bg: #0b0e20;
+  --sidebar-text: #f6f7ff;
+  --scrim: rgb(4 6 18 / 52%);
+  --brand-glow: rgb(122 86 255 / 22%);
 }
 
 .dark {
-  --surface: var(--color-pine-dark);
-  --surface-raised: #1c2620;
-  --text-primary: var(--color-stone-50);
-  --text-secondary: var(--color-stone-300);
-  --border: #2a352e;
-  --sidebar-bg: #16221c;
-  --sidebar-text: var(--color-stone-100);
-  --scrim: rgb(0 0 0 / 55%);
+  --surface: #070a17;
+  --surface-raised: rgba(14, 18, 40, 0.9);
+  --surface-soft: #0d1126;
+  --surface-elevated: #12172f;
+  --text-primary: #f6f7ff;
+  --text-secondary: #9aa4c1;
+  --border: #202845;
+  --border-strong: #303a60;
+  --sidebar-bg: #070a17;
+  --sidebar-text: #f6f7ff;
+  --scrim: rgb(0 0 0 / 68%);
+  --brand-glow: rgb(132 87 255 / 34%);
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  min-height: 100%;
+}
+body {
+  margin: 0;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 20% -10%, rgba(112, 70, 255, 0.14), transparent 28rem),
+    radial-gradient(circle at 100% 20%, rgba(174, 64, 255, 0.08), transparent 32rem), var(--surface);
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.28);
+}
+:focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 2px;
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% -5%, rgba(120, 78, 255, 0.09), transparent 26rem),
+    radial-gradient(circle at 88% 12%, rgba(170, 68, 255, 0.06), transparent 24rem), var(--surface);
+  isolation: isolate;
+}
+
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(124, 103, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 103, 255, 0.06) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.premium-panel {
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-elevation-1);
+  backdrop-filter: blur(18px);
+}
+
+.dark .premium-panel {
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.brand-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+  color: white;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  background: linear-gradient(145deg, #6c4dff, #a63df0);
+  box-shadow:
+    0 0 28px var(--brand-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border-radius: 15px;
+  background: rgba(122, 80, 255, 0.12);
+  filter: blur(8px);
+}
+
+.soft-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.soft-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.soft-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.soft-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -99,13 +209,101 @@
   }
 }
 
-body {
-  background-color: var(--surface);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
+/* Post-login polish V2: phone-first ergonomics and safe-area handling. */
+html {
+  background: var(--surface);
+  overscroll-behavior: none;
 }
 
-:focus-visible {
-  outline: 2px solid var(--color-ember);
-  outline-offset: 2px;
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 767px) {
+  .app-shell::before {
+    opacity: 0.13;
+    background-size: 40px 40px;
+  }
+
+  .premium-panel {
+    backdrop-filter: blur(14px);
+  }
+
+  .soft-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Post-login polish V3: responsive system layer. */
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .premium-panel {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  button,
+  a {
+    touch-action: manipulation;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --shadow-elevation-1: 0 7px 22px rgba(5, 7, 18, 0.16);
+    --shadow-elevation-2: 0 12px 30px rgba(5, 7, 18, 0.2);
+  }
+
+  .dark .premium-panel {
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Opt selected component text back down where iOS zoom is not a concern. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    font-size: initial;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .app-shell::before {
+    opacity: 0.17;
+  }
+}
+
+@media (min-width: 1600px) {
+  .app-shell::before {
+    background-size: 60px 60px;
+  }
 }

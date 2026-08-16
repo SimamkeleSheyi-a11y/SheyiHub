@@ -21,6 +21,8 @@ export function Modal({ isOpen, onClose, title, children, size = "sm" }: ModalPr
   useEffect(() => {
     if (!isOpen) return;
     triggerElement.current = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     const panel = panelRef.current;
     const focusables = panel?.querySelectorAll<HTMLElement>(FOCUSABLE);
@@ -47,6 +49,7 @@ export function Modal({ isOpen, onClose, title, children, size = "sm" }: ModalPr
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
       (triggerElement.current as HTMLElement | null)?.focus?.();
     };
   }, [isOpen, onClose]);
@@ -55,8 +58,7 @@ export function Modal({ isOpen, onClose, title, children, size = "sm" }: ModalPr
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: "var(--scrim)" }}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--scrim)] p-0 backdrop-blur-[5px] sm:items-center sm:p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -67,18 +69,19 @@ export function Modal({ isOpen, onClose, title, children, size = "sm" }: ModalPr
         aria-modal="true"
         aria-labelledby="modal-title"
         className={cn(
-          "w-full rounded-xl bg-(--surface-raised) p-6 shadow-[var(--shadow-elevation-3)] animate-fade-in",
-          size === "sm" ? "max-w-[480px]" : "max-w-[640px]"
+          "max-h-[92dvh] w-full overflow-y-auto rounded-t-[22px] border border-b-0 border-(--border) bg-(--surface-raised) px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-3 shadow-[var(--shadow-elevation-4)] sm:max-h-[88vh] sm:rounded-[18px] sm:border sm:p-6",
+          size === "sm" ? "sm:max-w-[480px]" : "sm:max-w-[680px]"
         )}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 id="modal-title" className="font-display text-lg font-semibold text-(--text-primary)">
+        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-(--border-strong) sm:hidden" />
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 id="modal-title" className="min-w-0 truncate font-display text-base font-semibold text-(--text-primary) sm:text-lg">
             {title}
           </h2>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="rounded-md p-1 text-(--text-secondary) hover:bg-stone-100 dark:hover:bg-white/10"
+            className="grid size-9 shrink-0 place-items-center rounded-[10px] text-(--text-secondary) transition-colors hover:bg-ember/8 hover:text-(--text-primary)"
           >
             <X className="size-5" />
           </button>

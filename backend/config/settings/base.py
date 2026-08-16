@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     "apps.messaging",
     "apps.notifications",
     "apps.realtime",
+    "apps.workspaces",
+    "apps.tasks",
 ]
 
 MIDDLEWARE = [

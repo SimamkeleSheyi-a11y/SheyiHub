@@ -58,12 +58,14 @@ function SectionTitle({
 }) {
   return (
     <div className="mb-5 flex items-start gap-3">
-      <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-pine/10 text-pine dark:bg-white/10 dark:text-stone-100">
+      <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-[11px] border border-ember/12 bg-ember/10 text-ember">
         <Icon className="size-4.5" aria-hidden />
       </span>
       <div>
-        <h2 className="font-display text-base font-semibold text-(--text-primary)">{title}</h2>
-        <p className="mt-0.5 text-sm text-(--text-secondary)">{description}</p>
+        <h2 className="font-display text-sm font-semibold tracking-[-0.02em] text-(--text-primary)">
+          {title}
+        </h2>
+        <p className="mt-1 text-[10px] leading-5 text-(--text-secondary)">{description}</p>
       </div>
     </div>
   );
@@ -83,10 +85,10 @@ function PreferenceRow({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-4 border-b border-(--border) py-3.5 last:border-b-0">
+    <label className="flex cursor-pointer items-center justify-between gap-4 border-b border-(--border) py-4 last:border-b-0">
       <span>
-        <span className="block text-sm font-medium text-(--text-primary)">{label}</span>
-        <span className="mt-0.5 block text-xs leading-relaxed text-(--text-secondary)">{description}</span>
+        <span className="block text-xs font-semibold text-(--text-primary)">{label}</span>
+        <span className="mt-1 block text-[10px] leading-5 text-(--text-secondary)">{description}</span>
       </span>
       <input
         type="checkbox"
@@ -202,15 +204,21 @@ export function SettingsPage() {
     : null;
 
   return (
-    <div className="mx-auto flex max-w-[880px] flex-col gap-6 pb-4">
-      <div>
-        <h1 className="font-display text-2xl font-semibold text-(--text-primary)">Settings</h1>
-        <p className="mt-1 text-sm text-(--text-secondary)">
-          Manage how your SheyiHub profile looks, behaves and notifies you.
-        </p>
-      </div>
+    <div className="mx-auto flex max-w-[1080px] flex-col gap-4 pb-4 sm:gap-5">
+      <section className="relative overflow-hidden rounded-[18px] border border-(--border) bg-(--surface-raised) p-4 shadow-[var(--shadow-elevation-1)] sm:p-5 lg:p-6">
+        <div className="pointer-events-none absolute -right-14 -top-20 size-52 rounded-full bg-ember/10 blur-3xl" />
+        <div className="relative">
+          <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-ember">
+            <ShieldCheck className="size-3.5" /> Personal workspace
+          </div>
+          <h1 className="font-display text-[24px] font-semibold tracking-[-0.045em] text-(--text-primary) sm:text-[28px]">Settings</h1>
+          <p className="mt-1 max-w-2xl text-[11px] leading-5 text-(--text-secondary) sm:text-xs">
+            Manage your profile, appearance, notifications and account security.
+          </p>
+        </div>
+      </section>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="p-4 sm:p-6">
         <SectionTitle
           icon={UserIcon}
           title="Profile"
@@ -218,28 +226,42 @@ export function SettingsPage() {
         />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-4 rounded-lg border border-(--border) bg-(--surface) p-4 sm:flex-row sm:items-center">
-            <Avatar name={displayName} src={avatarUrl} size="xl" className="border-2 border-(--surface-raised) shadow-[var(--shadow-elevation-2)]" />
+          <div className="relative flex flex-col items-center gap-4 overflow-hidden rounded-[15px] border border-ember/12 bg-gradient-to-br from-ember/[0.10] to-transparent p-4 text-center sm:flex-row sm:items-center sm:text-left">
+            <Avatar
+              name={displayName}
+              src={avatarUrl}
+              size="xl"
+              className="border-2 border-(--surface-raised) shadow-[var(--shadow-elevation-2)]"
+            />
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="truncate font-display text-lg font-semibold text-(--text-primary)">
+                <p className="truncate font-display text-base font-semibold tracking-[-0.025em] text-(--text-primary)">
                   {displayName.trim() || "Your display name"}
                 </p>
                 <Badge tone={user?.email_verified ? "signal" : "ember"}>
                   {user?.email_verified ? "Verified" : "Email unverified"}
                 </Badge>
               </div>
-              <p className="mt-1 truncate text-sm text-(--text-secondary)">{user?.email}</p>
+              <p className="mt-1 break-all text-xs text-(--text-secondary) sm:truncate sm:text-sm">
+                {user?.email}
+              </p>
               {bio.trim() ? (
                 <p className="mt-2 max-w-xl text-sm leading-relaxed text-(--text-secondary)">{bio.trim()}</p>
               ) : (
-                <p className="mt-2 text-sm italic text-(--text-secondary)">Add a short bio to introduce yourself.</p>
+                <p className="mt-2 text-sm italic text-(--text-secondary)">
+                  Add a short bio to introduce yourself.
+                </p>
               )}
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Input label="Email" value={user?.email ?? ""} disabled hint="Your sign-in email cannot be changed here." />
+            <Input
+              label="Email"
+              value={user?.email ?? ""}
+              disabled
+              hint="Your sign-in email cannot be changed here."
+            />
             <Input
               label="Display name"
               value={displayName}
@@ -270,12 +292,18 @@ export function SettingsPage() {
             <p className="mt-1 text-right font-mono text-xs text-(--text-secondary)">{bio.length}/240</p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 border-t border-(--border) pt-4">
-            <Button type="submit" isLoading={updateMutation.isPending} disabled={!isProfileDirty}>
+          <div className="grid gap-2 border-t border-(--border) pt-4 sm:flex sm:flex-wrap sm:items-center">
+            <Button className="w-full sm:w-auto" type="submit" isLoading={updateMutation.isPending} disabled={!isProfileDirty}>
               Save changes
             </Button>
             {isProfileDirty ? (
-              <Button type="button" variant="ghost" onClick={resetProfileForm} disabled={updateMutation.isPending}>
+              <Button
+                className="w-full sm:w-auto"
+                type="button"
+                variant="ghost"
+                onClick={resetProfileForm}
+                disabled={updateMutation.isPending}
+              >
                 <RotateCcw className="size-4" aria-hidden /> Reset
               </Button>
             ) : (
@@ -287,7 +315,7 @@ export function SettingsPage() {
         </form>
       </Card>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="p-4 sm:p-6">
         <SectionTitle
           icon={Palette}
           title="Appearance"
@@ -301,10 +329,10 @@ export function SettingsPage() {
               onClick={() => setTheme(value)}
               aria-pressed={theme === value}
               className={cn(
-                "flex min-h-28 flex-col items-start rounded-lg border p-4 text-left transition-colors",
+                "flex min-h-28 flex-col items-start rounded-[14px] border p-4 text-left transition-all",
                 theme === value
-                  ? "border-ember bg-ember/10 ring-1 ring-ember"
-                  : "border-(--border) hover:bg-stone-100 dark:hover:bg-white/5"
+                  ? "border-ember/45 bg-ember/10 ring-1 ring-ember/30 shadow-[0_10px_28px_rgba(122,86,255,.10)]"
+                  : "border-(--border) bg-(--surface-soft) hover:border-ember/25 hover:bg-ember/[0.045]"
               )}
             >
               <Icon className="mb-3 size-5" aria-hidden />
@@ -315,7 +343,7 @@ export function SettingsPage() {
         </div>
       </Card>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="p-4 sm:p-6">
         <SectionTitle
           icon={BellRing}
           title="Notifications"
@@ -367,16 +395,22 @@ export function SettingsPage() {
               onChange={(checked) => updatePreference({ browser_enabled: checked })}
             />
             {browserPermission !== "granted" ? (
-              <Button className="mt-4" variant="secondary" size="sm" onClick={enableBrowserNotifications}>
-                {browserPermission === "denied" ? <BellOff className="size-4" /> : <BellRing className="size-4" />}
-                {browserPermission === "denied" ? "Browser permission blocked" : "Enable browser notifications"}
+              <Button className="mt-4 w-full sm:w-auto" variant="secondary" size="sm" onClick={enableBrowserNotifications}>
+                {browserPermission === "denied" ? (
+                  <BellOff className="size-4" />
+                ) : (
+                  <BellRing className="size-4" />
+                )}
+                {browserPermission === "denied"
+                  ? "Browser permission blocked"
+                  : "Enable browser notifications"}
               </Button>
             ) : null}
           </div>
         ) : null}
       </Card>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="p-4 sm:p-6">
         <SectionTitle
           icon={ShieldCheck}
           title="Account & security"
@@ -399,6 +433,7 @@ export function SettingsPage() {
               <Badge tone="signal">Verified</Badge>
             ) : (
               <Button
+                className="w-full sm:w-auto"
                 size="sm"
                 variant="secondary"
                 onClick={() => resendMutation.mutate({})}
@@ -420,6 +455,7 @@ export function SettingsPage() {
               </div>
             </div>
             <Button
+              className="w-full sm:w-auto"
               size="sm"
               variant="secondary"
               onClick={() => passwordResetMutation.mutate()}

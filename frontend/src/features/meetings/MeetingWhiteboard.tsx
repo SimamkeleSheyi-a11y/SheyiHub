@@ -206,19 +206,19 @@ export function MeetingWhiteboard({ meetingId, live = false, isHost = false, cla
   }, [live, snapshotQuery.isError, snapshotQuery.isLoading, strokes.length]);
 
   return (
-    <div className={`flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-stone-900 ${className}`}>
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-stone-950/70 px-3 py-2.5">
+    <div className={`flex min-h-0 flex-col overflow-hidden rounded-[16px] border border-white/10 bg-stone-900 sm:rounded-2xl ${className}`}>
+      <div className="flex flex-col gap-2 border-b border-white/10 bg-stone-950/70 px-2.5 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-3">
         <div>
-          <p className="text-sm font-semibold text-white">Whiteboard</p>
-          <p className="text-xs text-stone-400">{statusText}</p>
+          <p className="text-xs font-semibold text-white sm:text-sm">Whiteboard</p>
+          <p className="text-[9px] text-stone-400 sm:text-xs">{statusText}</p>
         </div>
 
         {live ? (
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="hide-scrollbar flex max-w-full items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible">
             <button
               type="button"
               onClick={() => setTool("draw")}
-              className={`inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium ${tool === "draw" ? "bg-ember text-stone-950" : "bg-white/10 text-white hover:bg-white/15"}`}
+              className={`inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[10px] font-medium sm:text-xs ${tool === "draw" ? "bg-ember text-stone-950" : "bg-white/10 text-white hover:bg-white/15"}`}
               aria-label="Pen tool"
             >
               <Pencil className="size-3.5" /> Pen
@@ -226,7 +226,7 @@ export function MeetingWhiteboard({ meetingId, live = false, isHost = false, cla
             <button
               type="button"
               onClick={() => setTool("erase")}
-              className={`inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium ${tool === "erase" ? "bg-ember text-stone-950" : "bg-white/10 text-white hover:bg-white/15"}`}
+              className={`inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[10px] font-medium sm:text-xs ${tool === "erase" ? "bg-ember text-stone-950" : "bg-white/10 text-white hover:bg-white/15"}`}
               aria-label="Eraser tool"
             >
               <Eraser className="size-3.5" /> Erase
@@ -234,7 +234,7 @@ export function MeetingWhiteboard({ meetingId, live = false, isHost = false, cla
 
             <div className="mx-1 hidden h-6 w-px bg-white/10 sm:block" />
 
-            <div className="flex items-center gap-1" aria-label="Pen colours">
+            <div className="flex shrink-0 items-center gap-1" aria-label="Pen colours">
               {PEN_COLOURS.map((item) => (
                 <button
                   key={item}
@@ -251,7 +251,7 @@ export function MeetingWhiteboard({ meetingId, live = false, isHost = false, cla
               aria-label="Pen width"
               value={penWidth}
               onChange={(event) => { setPenWidth(Number(event.target.value)); setTool("draw"); }}
-              className="h-9 rounded-lg border border-white/10 bg-white/10 px-2 text-xs text-white outline-none"
+              className="h-9 shrink-0 rounded-lg border border-white/10 bg-white/10 px-2 text-[10px] text-white outline-none sm:text-xs"
             >
               {PEN_WIDTHS.map((width) => <option key={width} value={width} className="bg-stone-900">{width}px</option>)}
             </select>
@@ -259,7 +259,7 @@ export function MeetingWhiteboard({ meetingId, live = false, isHost = false, cla
             <button
               type="button"
               onClick={() => void undoOwnStroke()}
-              className="flex size-9 items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/15"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/15"
               aria-label="Undo my last stroke"
             >
               <Undo2 className="size-4" />
@@ -274,7 +274,7 @@ export function MeetingWhiteboard({ meetingId, live = false, isHost = false, cla
         ) : null}
       </div>
 
-      <div ref={wrapperRef} className="relative min-h-[360px] flex-1 bg-white">
+      <div ref={wrapperRef} className="relative min-h-[280px] flex-1 bg-white sm:min-h-[360px]">
         {snapshotQuery.isError ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center p-6 text-center text-sm text-stone-600">
             The saved whiteboard couldn't be loaded.

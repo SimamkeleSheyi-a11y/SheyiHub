@@ -12,6 +12,9 @@ import { MeetingRoomPage } from "@/features/meetings/MeetingRoomPage";
 import { MeetingsListPage } from "@/features/meetings/MeetingsListPage";
 import { ScheduleMeetingPage } from "@/features/meetings/ScheduleMeetingPage";
 import { NotificationsPage } from "@/features/notifications/NotificationsPage";
+import { OnboardingPage } from "@/features/onboarding/OnboardingPage";
+import { TasksPage } from "@/features/tasks/TasksPage";
+import { WorkspacesPage } from "@/features/workspaces/WorkspacesPage";
 import { SettingsPage } from "@/features/settings/SettingsPage";
 
 import { DashboardLayout } from "./DashboardLayout";
@@ -56,6 +59,9 @@ export function AppRouter() {
         <Route path="/chats" element={<ChatsPage />} />
         <Route path="/chats/:id" element={<ChatsPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/workspaces" element={<WorkspacesPage />} />
+        <Route path="/tasks" element={<TasksPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
 

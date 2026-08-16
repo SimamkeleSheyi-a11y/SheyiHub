@@ -67,6 +67,7 @@ export function MeetingDetailPage() {
       toast.success("Meeting cancelled.");
       navigate("/meetings");
     },
+    onError: (err) => toast.error(err instanceof ApiError ? err.message : "Couldn't cancel the meeting."),
   });
 
   const addParticipantMutation = useMutation({
@@ -119,18 +120,18 @@ export function MeetingDetailPage() {
     : null;
 
   return (
-    <div className="mx-auto flex max-w-[720px] flex-col gap-4">
-      <Card className="flex flex-col gap-4">
-        <div className="flex items-start justify-between gap-4">
+    <div className="mx-auto flex max-w-[1120px] flex-col gap-4 pb-2 sm:gap-5">
+      <Card className="relative flex flex-col gap-4 overflow-hidden p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-3">
           {isEditing ? (
             <Input value={title} onChange={(e) => setTitle(e.target.value)} className="text-lg font-semibold" />
           ) : (
-            <h1 className="font-display text-xl font-semibold text-(--text-primary)">{meeting.title}</h1>
+            <h1 className="min-w-0 font-display text-[22px] font-semibold tracking-[-0.04em] text-(--text-primary) sm:text-[26px]">{meeting.title}</h1>
           )}
           <Badge tone={meeting.status === "cancelled" ? "rust" : "neutral"}>{meeting.status}</Badge>
         </div>
 
-        <dl className="grid grid-cols-2 gap-y-2 text-sm">
+        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 rounded-[14px] border border-(--border) bg-(--surface-soft) p-3 text-[10px] sm:p-4 sm:text-xs">
           <dt className="text-(--text-secondary)">Host</dt>
           <dd className="text-(--text-primary)">{meeting.host.display_name}</dd>
           <dt className="text-(--text-secondary)">Starts</dt>
@@ -158,7 +159,7 @@ export function MeetingDetailPage() {
         </dl>
 
         {!isHost && myInvite && meeting.status === "scheduled" ? (
-          <div className="rounded-lg border border-(--border) bg-(--surface) p-4">
+          <div className="rounded-[14px] border border-ember/12 bg-ember/[0.05] p-4">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="font-medium text-(--text-primary)">Your invitation</p>
@@ -166,8 +167,8 @@ export function MeetingDetailPage() {
               </div>
               <Badge tone={inviteTone(myInvite.status)}>{inviteStatusLabel(myInvite.status)}</Badge>
             </div>
-            <div className="flex gap-2">
-              <Button
+            <div className="grid grid-cols-2 gap-2 sm:flex">
+              <Button className="w-full sm:w-auto"
                 size="sm"
                 isLoading={respondMutation.isPending && respondMutation.variables === "accept"}
                 onClick={() => respondMutation.mutate("accept")}
@@ -175,6 +176,7 @@ export function MeetingDetailPage() {
                 <Check className="size-4" /> Accept
               </Button>
               <Button
+                className="w-full sm:w-auto"
                 size="sm"
                 variant="secondary"
                 isLoading={respondMutation.isPending && respondMutation.variables === "decline"}
@@ -189,8 +191,8 @@ export function MeetingDetailPage() {
         {formError ? <ErrorBanner message={formError} /> : null}
 
         {canJoin ? (
-          <div className="flex flex-wrap gap-2 border-t border-(--border) pt-4">
-            <Button onClick={() => navigate(`/meetings/${meeting.id}/room`)}>
+          <div className="grid gap-2 border-t border-(--border) pt-4 sm:flex sm:flex-wrap">
+            <Button className="w-full sm:w-auto" onClick={() => navigate(`/meetings/${meeting.id}/room`)}>
               <Video className="size-4" /> {isHost && meeting.status === "scheduled" ? "Start meeting" : "Join meeting"}
             </Button>
             {!isHost && meeting.status === "scheduled" ? (
@@ -200,7 +202,7 @@ export function MeetingDetailPage() {
         ) : null}
 
         {isHost && meeting.status === "scheduled" ? (
-          <div className="flex gap-2 border-t border-(--border) pt-4">
+          <div className="grid gap-2 border-t border-(--border) pt-4 sm:flex">
             {isEditing ? (
               <>
                 <Button isLoading={updateMutation.isPending} onClick={() => updateMutation.mutate({ title })}>
@@ -213,6 +215,7 @@ export function MeetingDetailPage() {
             ) : (
               <>
                 <Button
+                  className="w-full sm:w-auto"
                   variant="secondary"
                   onClick={() => {
                     setTitle(meeting.title);
@@ -221,7 +224,7 @@ export function MeetingDetailPage() {
                 >
                   <Pencil className="size-4" /> Edit
                 </Button>
-                <Button variant="destructive" onClick={() => setIsCancelOpen(true)}>
+                <Button className="w-full sm:w-auto" variant="destructive" onClick={() => setIsCancelOpen(true)}>
                   <Ban className="size-4" /> Cancel meeting
                 </Button>
               </>
@@ -230,8 +233,8 @@ export function MeetingDetailPage() {
         ) : null}
       </Card>
 
-      <Card className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-3">
+      <Card className="relative flex flex-col gap-4 overflow-hidden p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-(--text-primary)">
               <Users className="size-5" /> Participants
@@ -271,7 +274,7 @@ export function MeetingDetailPage() {
         ) : (
           <div className="divide-y divide-(--border) rounded-lg border border-(--border)">
             {meeting.participants.map((participant) => (
-              <div key={participant.id} className="flex items-center justify-between gap-3 p-3">
+              <div key={participant.id} className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 items-center gap-3">
                   <Avatar name={participant.user.display_name} src={participant.user.avatar_url} size="md" />
                   <div className="min-w-0">
@@ -279,7 +282,7 @@ export function MeetingDetailPage() {
                     <p className="truncate text-sm text-(--text-secondary)">{participant.user.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-2 sm:justify-end">
                   <Badge tone={inviteTone(participant.status)}>{inviteStatusLabel(participant.status)}</Badge>
                   {isHost && meeting.status === "scheduled" ? (
                     <Button
@@ -300,24 +303,24 @@ export function MeetingDetailPage() {
       </Card>
 
       {canAccessSharedContent ? (
-        <Card className="flex min-h-[360px] flex-col gap-4">
+        <Card className="flex min-h-[320px] flex-col gap-4 p-4 sm:min-h-[360px] sm:p-5">
           <div>
             <h2 className="font-display text-lg font-semibold text-(--text-primary)">Shared files</h2>
             <p className="text-sm text-(--text-secondary)">Files stay available here after the meeting ends.</p>
           </div>
-          <div className="min-h-[300px] flex-1"><MeetingFilesPanel meetingId={meeting.id} /></div>
+          <div className="min-h-[260px] flex-1 sm:min-h-[300px]"><MeetingFilesPanel meetingId={meeting.id} /></div>
         </Card>
       ) : null}
 
       {canAccessSharedContent ? (
-        <Card className="flex min-h-[440px] flex-col gap-4">
+        <Card className="flex min-h-[380px] flex-col gap-4 p-4 sm:min-h-[440px] sm:p-5">
           <div>
             <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-(--text-primary)">
               <Pencil className="size-5" /> Saved whiteboard
             </h2>
             <p className="text-sm text-(--text-secondary)">The board is preserved with the meeting and remains viewable after it ends.</p>
           </div>
-          <MeetingWhiteboard meetingId={meeting.id} className="min-h-[360px] flex-1" />
+          <MeetingWhiteboard meetingId={meeting.id} className="min-h-[300px] flex-1 sm:min-h-[360px]" />
         </Card>
       ) : null}
 
@@ -325,7 +328,7 @@ export function MeetingDetailPage() {
         <p className="mb-4 text-sm text-(--text-secondary)">
           This can't be undone. Everyone invited will no longer be able to join.
         </p>
-        <div className="flex justify-end gap-2">
+        <div className="grid gap-2 sm:flex sm:justify-end">
           <Button variant="ghost" onClick={() => setIsCancelOpen(false)}>
             Keep meeting
           </Button>
